@@ -31,55 +31,83 @@ class Stack:
         reversed_arr = self.display_stack()[::-1]
         print("The reverse of stack is {}".format(reversed_arr))
 
-    def priorties_operator(self, argument):
-        switcher = {
-            "(": 1,
-            ")": 1,
-            "^": 2,
-            "*": 3,
-            "/": 3,
-            "+": 4,
-            "-": 4,
-        }
+    def top_stack(self):
 
-        return switcher.get(argument, "0")
+        if len(self.stack_list) == 0:
+            return -1
 
-    def infix_Postfix(self):
-        Output = []
-        priority = []
-        stack_operator = []
-        expression_array = self.display_stack()
-        for i in range(0, expression_array.size):
-            priority.append(self.priorties_operator(expression_array[i]))
-
-        if priority[0] != "0":
-            Output.append(" ")
-            stack_operator.append(expression_array[0])
-        elif priority[i] == "0":
-            Output.append(expression_array[i])
-            stack_operator.append(expression_array[i] - 1)
+        elif len(self.stack_list) == 1:
+            return "!@!", self.stack_list[0]
 
         else:
-            Output.append(expression_array[i])
+            length = len(self.stack_list)
+            top = length - 1
+            top_value = self.stack_list[top]
+            return top_value
+        return None
 
 
-expression = input("write your Expression : ")
+def priorties(argument):
+    switcher = {
+        "(": 1.2,
+        ")": 1,
+        "^": 2,
+        "*": 3,
+        "/": 3,
+        "+": 4,
+        "-": 4,
+    }
+    return switcher.get(argument, "0")
+
+
+def infix_Postfix(expression):
+    stack = Stack()
+    operations = []
+    output = ""
+
+    for i in range(0, len(expression)):
+        operations.append(priorties(expression[i]))
+
+    for index in range(0, len(expression)):
+        if operations[index] == "0":
+            output = output + expression[index]
+
+        elif operations[index] != "0":
+
+            if stack.top_stack() == -1:
+                stack.push(expression[index])
+
+            elif int(priorties(stack.top_stack())) > int(operations[index]):
+                stack.push(expression[index])
+
+            elif stack.top_stack() == "(":
+                stack.push(expression[index])
+
+            elif stack.top_stack() == ")":
+                while True:
+
+                    if stack.top_stack() != "(" or stack.top_stack() != ")":
+                        output = output + stack.top_stack()
+
+                    stack.pop()
+
+                    if stack.top_stack() == "(":
+                        break
+
+            elif stack.top_stack()[0] == "!@!":
+                output = output + stack.top_stack()[1]
+
+    return operations, output
+
+
+expressions = input("write your Expression : ")
+print(infix_Postfix(expressions))
 # print("lenth of string is {}".format(len(expression)))
-stack = Stack(expression)
 
-stack.push()
-stack.infix_Postfix()
-# for i in range(0, len(expression)):
-#     stack.push(expression[i])
 
-# stack.pop()
-# stack_two = Stack()
-# stack_two.push("21")
-# stack_two.push("22")
-# stack_two.push("31")
-# stack_two.push("34")
-# stack.pop()
-# stack.pop()
-
-# stack.display_stack()
-# stack.reverse_stack()
+# stack.push(1)
+# stack.push(3)
+# stack.push(4)
+# print(stack.top_stack())
+# #
+# # stack.push()
